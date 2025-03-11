@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	handler := api.PrinterHndler{DB: &database.Database{}}
+	handler := api.PrinterHandler{DB: &database.Database{}}
 	handler.DB.Connect()
 
 	mux := http.NewServeMux()

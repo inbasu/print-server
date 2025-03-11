@@ -2,7 +2,8 @@ package database
 
 import (
 	"database/sql"
-	_ "github.com/glebarez/go-sqlite"
+	"fmt"
+	_ "github.com/lib/pq"
 )
 
 type Printer struct {
@@ -20,7 +21,11 @@ type Database struct {
 }
 
 func (d *Database) Connect() {
-	db, _ := sql.Open("sqlite", "./db.sqlite3")
+	connStr := "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		fmt.Println(err)
+	}
 	d.db = db
 }
 
