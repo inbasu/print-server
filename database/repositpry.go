@@ -3,8 +3,6 @@ package database
 import (
 	"database/sql"
 	"errors"
-	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -14,13 +12,10 @@ type CRUD interface {
 }
 
 func (d *Database) Create(name string, ip string) error {
-	if !isValidIp(ip) {
-		return errors.New("Invalid IP")
-	}
 	var id int
 	err := d.db.QueryRow("INSERT INTO printers (id, name, ip) VALUES (default, $1, $2) RETURNING id", name, ip).Scan(&id)
 	if err != nil {
-		fmt.Println(err)
+		/* залогировать здесь */
 		return errors.New("Database error")
 	}
 	return nil
@@ -55,9 +50,4 @@ func (d *Database) getByName(name string) *sql.Rows {
 	if err != nil {
 	}
 	return rows
-}
-
-func isValidIp(ip string) bool {
-	ipPattern, _ := regexp.Compile("^((?:[01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\\.){3}(?:[01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$")
-	return ipPattern.Match([]byte(ip))
 }
