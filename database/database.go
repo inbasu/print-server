@@ -7,8 +7,8 @@ import (
 )
 
 type Printer struct {
-	Name string
-	IP   string
+	Name string `json:"name"`
+	IP   string `json:"ip"`
 }
 
 type DatabaseConnection interface {

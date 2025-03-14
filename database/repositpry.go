@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -11,16 +13,17 @@ type CRUD interface {
 	Read()
 }
 
-func (d *Database) Create(name string, ip string) *Printer {
+func (d *Database) Create(name string, ip string) error {
 	if !isValidIp(ip) {
-		return nil
+		return errors.New("Invalid IP")
 	}
-	p := &Printer{}
-	err := d.db.QueryRow("INSERT INTO printers (id, name, ip) VALUES (default, $1, $2)", name, ip).Scan(&p.Name, &p.Name)
+	var id int
+	err := d.db.QueryRow("INSERT INTO printers (id, name, ip) VALUES (default, $1, $2) RETURNING id", name, ip).Scan(&id)
 	if err != nil {
+		fmt.Println(err)
+		return errors.New("Database error")
 	}
-	return p
-
+	return nil
 }
 
 func (d *Database) Read(mask string) []Printer {

@@ -12,6 +12,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", handler.Get)
+	mux.HandleFunc("POST /", handler.Post)
 
 	http.ListenAndServe(":8080", mux)
 	handler.DB.Close()
