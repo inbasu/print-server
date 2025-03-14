@@ -1,4 +1,4 @@
-package api
+package handers
 
 import (
 	"encoding/json"
