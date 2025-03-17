@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"print-server/database"
 	"regexp"
@@ -10,6 +9,7 @@ import (
 
 type Handler interface {
 	Get()
+	Post()
 }
 
 type PrinterHandler struct {
