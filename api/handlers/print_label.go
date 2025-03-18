@@ -37,5 +37,4 @@ func Print(w http.ResponseWriter, r *http.Request) {
 	conn.Write([]byte(d.ZPL))
 	defer conn.Close()
 	writeResponse(w, http.StatusOK, "{\"ok\": \"ok\", \"error\": \"\"}")
-	w.WriteHeader(http.StatusOK)
 }
