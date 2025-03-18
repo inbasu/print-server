@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 )
@@ -12,21 +11,31 @@ type printData struct {
 	ZPL string `json:"zpl"`
 }
 
+func writeResponse(w http.ResponseWriter, status int, data string) {
+	w.WriteHeader(status)
+	w.Write([]byte(data))
+}
+
 func Print(w http.ResponseWriter, r *http.Request) {
 	var d printData
-	var jsonData []byte
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewDecoder(r.Body).Decode(&d)
-	if !IsValidIp(d.IP) || false {
-		jsonData = []byte("{ \"error\": \"Invalid IP\"}")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write(jsonData)
+	if json.NewDecoder(r.Body).Decode(&d) != nil {
+		writeResponse(w, http.StatusBadRequest, "{\"error\": \"Bad data\"}")
 		return
 	}
-	conn, _ := net.Dial("tcp", d.IP+"9100")
-	fmt.Fprintf(conn, d.ZPL)
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonData)
+	if !IsValidIp(d.IP) || false {
+		writeResponse(w, http.StatusBadRequest, "{\"error\":  \"Invalid IP\"}")
+		return
+	}
+	dialer := net.Dialer{Timeout: 5000000}
+	conn, conErr := dialer.Dial("tcp", d.IP+":9100")
+	if conErr != nil {
+		writeResponse(w, http.StatusOK, "{\"error\": \"Perhaps printer is offline.\"}")
+		return
+	}
+	conn.Write([]byte(d.ZPL))
 	defer conn.Close()
+	writeResponse(w, http.StatusOK, "{\"ok\": \"ok\", \"error\": \"\"}")
+	w.WriteHeader(http.StatusOK)
 }
