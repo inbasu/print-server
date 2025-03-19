@@ -7,6 +7,7 @@ import (
 )
 
 type Printer struct {
+	PK   int    `json:"pk"`
 	Name string `json:"name"`
 	IP   string `json:"ip"`
 }
